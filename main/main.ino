@@ -78,6 +78,7 @@ float temp=0.0f;
 float oldtemp=temp;
 float diff=0.1f;
 bool is_active=false;
+bool isCelcius=true;
 
 const int freezer = 25;
 
@@ -105,10 +106,10 @@ void setup() {
   server.on("/wifisave", handleWifiSave);
   server.on("/set_temp",handleSetTemp);
   server.on("/save_temp",handleSaveTemp);
+  server.on("/update_units",handleUnits);
   //server.on("/get_graph",handleGraph);
   server.on("/generate_204", handleRoot);  //Android captive portal. Maybe not needed. Might be handled by notFound handler.
   server.on("/fwlink", handleRoot);  //Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
-  server.onNotFound ( handleNotFound );
   /*server.on("/get_temperature_data", HTTP_GET, []() {
         String jsonResponse = "[";
         int dataSize= sizeof(temperatureData) / sizeof(temperatureData[0]);
@@ -121,10 +122,11 @@ void setup() {
         jsonResponse += "]";
         server.send(200, "application/json", jsonResponse);
     });*/
+  server.onNotFound ( handleNotFound );
   server.begin(); // Web server start
   Serial.println("HTTP server started");
-  //loadCredentials(); // Load WLAN credentials from network
-  //connect = strlen(ssid) > 0; // Request WLAN connect if there is a SSID
+  loadCredentials(); // Load WLAN credentials from network
+  connect = strlen(ssid) > 0; // Request WLAN connect if there is a SSID
   display.begin(SSD1306_SWITCHCAPVCC, 0x3C); // Address 0x3C for 128x32
 
   thermo.begin(MAX31865_3WIRE);  // set to 2WIRE or 4WIRE as necessary
@@ -210,11 +212,11 @@ void updateOLED(){
   display.setCursor(0,10);
   display.print("Setpoint:");
   display.print(newtemp);
-  display.print(" *C");
+  display.print(isCelcius?" °C":" °F");
   display.setCursor(0,20);
   display.print("Curent Temp:");
   display.print(temp);
-  display.print(" *C");
+  display.print(isCelcius?" °C":" °F");
   display.display();
 }
 

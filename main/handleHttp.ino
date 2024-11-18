@@ -97,14 +97,14 @@ void handleRoot() {
     "            <h1>Just Chillin' Freezer</h1>"
     "            <img src='https://img.goodfon.com/wallpaper/nbig/4/57/fjords-rocky-mountains-snow-sea-bay-water-night-northern-lig.webp' alt='Background_Image'>"
   );
-  server.sendContent("<h2>Current Freezer Temperature: " + String(temp) + " *C</h2>");
+  server.sendContent("<h2>Current Freezer Temperature: " + String(temp) + String(isCelcius?" °C":" °F")+"</h2>");
   if(is_active){
     server.sendContent("<h2>Freezer Status <green_text> ON </green_text> </h2>");
   }
   else{
     server.sendContent("<h2>Freezer Status <red_text> OFF </red_text> </h2>");
   }
-  server.sendContent("<p><h3>You can update the setpoint temperature <a href='/set_temp'>here</a>.</h3></p><p><h3>You can view the temperature graph <a href='/get_graph'>here</a>.</h3></p><p><h4> Wifi Connection:</p>");
+  server.sendContent("<p><h3>You can update the setpoint temperature <a href='/set_temp'>here</a>.</h3></p><p><h3>You can also <a href='/updateUnits'>toggle units</a>.</h3></p><p><h3>You can view the temperature graph <a href='/get_graph'>here</a>.</h3></p><p><h4> Wifi Connection:</p>");
   if (server.client().localIP() == apIP) {
     server.sendContent(String("<p>You are connected through the soft AP: <strong>") + softAP_ssid + "</strong></p>");
   } else {
@@ -294,6 +294,26 @@ void handleSaveTemp() {
   String response = "<html><head><script>"
                     "alert('Temp updated: " + String(newtemp) + "');"
                     "window.location.href = 'set_temp';"
+                    "</script></head><body></body></html>";
+
+  // Send the response
+  server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  server.sendHeader("Pragma", "no-cache");
+  server.sendHeader("Expires", "-1");
+  server.send(200, "text/html", response); // Send a 200 response with the HTML
+  server.client().stop(); // Stop is needed because we sent no content length
+  updateOLED();
+}
+
+void handleUnits() {
+  Serial.println("Data Incoming");
+  isCelcius=!isCelcius;
+  Serial.println(isCelcius);
+
+  // Create a small HTML response with a JavaScript alert
+  String response = "<html><head><script>"
+                    "alert('Temp updated: " + String(isCelcius ? "Celcius": "Farenheit" )+ "');"
+                    "window.location.href = '';"
                     "</script></head><body></body></html>";
 
   // Send the response
