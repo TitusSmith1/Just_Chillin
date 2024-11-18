@@ -78,7 +78,7 @@ float temp=0.0f;
 float oldtemp=temp;
 float diff=0.1f;
 bool is_active=false;
-bool isCelcius=true;
+bool isCelcius=false;
 
 const int freezer = 25;
 
@@ -212,16 +212,16 @@ void updateOLED(){
   display.setCursor(0,10);
   display.print("Setpoint:");
   display.print(newtemp);
-  display.print(isCelcius?" °C":" °F");
+  display.print(isCelcius?" *C":" *F");
   display.setCursor(0,20);
   display.print("Curent Temp:");
   display.print(temp);
-  display.print(isCelcius?" °C":" °F");
+  display.print(isCelcius?" *C":" *F");
   display.display();
 }
 
 void updateRDT(){
-  temp=thermo.temperature(RNOMINAL, RREF);
+  temp=isCelcius?thermo.temperature(RNOMINAL, RREF):thermo.temperature(RNOMINAL, RREF)*9/5+32;
   //Serial.println(temp);
   // Check and print any faults
   uint8_t fault = thermo.readFault();

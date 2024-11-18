@@ -104,7 +104,7 @@ void handleRoot() {
   else{
     server.sendContent("<h2>Freezer Status <red_text> OFF </red_text> </h2>");
   }
-  server.sendContent("<p><h3>You can update the setpoint temperature <a href='/set_temp'>here</a>.</h3></p><p><h3>You can also <a href='/updateUnits'>toggle units</a>.</h3></p><p><h3>You can view the temperature graph <a href='/get_graph'>here</a>.</h3></p><p><h4> Wifi Connection:</p>");
+  server.sendContent("<p><h3>You can update the setpoint temperature <a href='/set_temp'>here</a>.</h3></p><p><h3>You can also <a href='/update_units'>toggle units</a>.</h3></p><p><h3>You can view the temperature graph <a href='/get_graph'>here</a>.</h3></p><p><h4> Wifi Connection:</p>");
   if (server.client().localIP() == apIP) {
     server.sendContent(String("<p>You are connected through the soft AP: <strong>") + softAP_ssid + "</strong></p>");
   } else {
@@ -313,7 +313,7 @@ void handleUnits() {
   // Create a small HTML response with a JavaScript alert
   String response = "<html><head><script>"
                     "alert('Temp updated: " + String(isCelcius ? "Celcius": "Farenheit" )+ "');"
-                    "window.location.href = '';"
+                    "window.location.href = '/';"
                     "</script></head><body></body></html>";
 
   // Send the response
