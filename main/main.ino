@@ -43,7 +43,7 @@ float temperatures[ARRAY_SIZE]; // Array to store temperatures
 String runTimes[ARRAY_SIZE];    // Array to store runtimes in "HH:MM" format
 
 /* Set these to your desired softAP credentials. They are not configurable at runtime */
-const char *softAP_ssid = "ESP_ap";
+const char *softAP_ssid = "JustChillinFreezer";
 const char *softAP_password = "A6";
 
 /* hostname for mDNS. Should work at least on windows. Try http://esp8266.local */

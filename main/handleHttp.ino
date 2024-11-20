@@ -270,17 +270,6 @@ void handleSetTemp() {
     </body>
     </html>
     )");
-    /*
-    "<html><head></head><body>"
-    "<h1>Display</h1>"
-  );
-    server.sendContent(
-    "</table>"
-    "\r\n<br /><form method='POST' action='save_temp'><h4>Send Data:</h4>"
-    "<input type='number' placeholder='temperature' name='t'/>"
-    "<br /><input type='submit' value='Send'/></form>"
-    "</body></html>"
-  );*/
   server.client().stop(); // Stop is needed because we sent no content length
 }
 
@@ -324,7 +313,6 @@ void handleUnits() {
   server.client().stop(); // Stop is needed because we sent no content length
   updateOLED();
 }
-/** Handle Graph page */
 
 void handleGraph() {
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
@@ -371,7 +359,7 @@ void handleGraph() {
       for (let i = 0; i <= 10; i++) {
         const y = 350 - (i / 10) * 300;
         const temp = Math.round((Math.min(...data.temperatures) + (i / 10) * (Math.max(...data.temperatures) - Math.min(...data.temperatures))) * 10) / 10;
-        ctx.fillText(temp + '°C', 10, y + 3); // Y-axis labels
+        ctx.fillText(temp + '°', 10, y + 3); // Y-axis labels
       }
       
       // Plot data
@@ -406,10 +394,6 @@ void handleGraph() {
   server.client().stop(); // Stop is needed because we sent no content length
 }
 
-
-
-/** Handle temperature data retrieval */
-
 void handleTemperatureData() {
   // Simulated temperature data for this example
   String jsonResponse = "{ \"labels\":"+toArrayString(runTimes) +",\"temperatures\":"+toArrayString(temperatures)+"}";
@@ -421,86 +405,6 @@ void handleTemperatureData() {
   server.client().stop();
 }
 
-/*
-void handleGraph(){
-  server.sendContent(R"(
-    <!DOCTYPE html>
-    <html lang='en'>
-    <head>
-        <meta charset='UTF-8'>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0'>
-        <title>Temperature Graph</title>
-        <style>
-            body {
-                font-family: Arial, sans-serif;
-                margin: 0;
-                padding: 20px;
-                background-color: #0f0f0f;
-                color: #333;
-            }
-            h1 {
-                padding: 20px;
-                margin: 0;
-                color: #0194B0;
-            }
-            .container {
-                max-width: 600px;
-                margin: auto;
-                padding: 20px;
-                background: white;
-                border-radius: 10px;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            }
-            canvas {
-                max-width: 100%;
-                border-radius: 8px;
-            }
-        </style>
-        <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    </head>
-    <body>
-        <div class='container'>
-            <h1>Temperature Over Time</h1>
-            <canvas id="temperatureChart"></canvas>
-            <script>
-                // Fetch temperature data from the server
-                fetch('/get_temperature_data')
-                    .then(response => response.json())
-                    .then(data => {
-                        const labels = ) + labels + (;
-                        const temperatureChart = new Chart(
-                            document.getElementById('temperatureChart'),
-                            {
-                                type: 'line',
-                                data: {
-                                    labels: labels,
-                                    datasets: [{
-                                        label: 'Temperature (°C)',
-                                        data: data,
-                                        borderColor: '#0194B0',
-                                        backgroundColor: 'rgba(1, 148, 176, 0.2)',
-                                        fill: true,
-                                    }]
-                                },
-                                options: {
-                                    responsive: true,
-                                    scales: {
-                                        y: {
-                                            beginAtZero: true
-                                        }
-                                    }
-                                }
-                            }
-                        );
-                    });
-            </script>
-        </div>
-    </body>
-    </html>
-    )");
-  server.client().stop(); // Stop is needed because we sent no content length
-}
-*/
 void handleNotFound() {
   if (captivePortal()) { // If caprive portal redirect instead of displaying the error page.
     return;
