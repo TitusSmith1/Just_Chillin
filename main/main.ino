@@ -107,21 +107,10 @@ void setup() {
   server.on("/set_temp",handleSetTemp);
   server.on("/save_temp",handleSaveTemp);
   server.on("/update_units",handleUnits);
-  //server.on("/get_graph",handleGraph);
+  server.on("/get_graph",handleGraph);
   server.on("/generate_204", handleRoot);  //Android captive portal. Maybe not needed. Might be handled by notFound handler.
   server.on("/fwlink", handleRoot);  //Microsoft captive portal. Maybe not needed. Might be handled by notFound handler.
-  /*server.on("/get_temperature_data", HTTP_GET, []() {
-        String jsonResponse = "[";
-        int dataSize= sizeof(temperatureData) / sizeof(temperatureData[0]);
-        for (int i = 0; i < dataSize; i++) {
-            jsonResponse += String(temperatureData[i]);
-            if (i < dataSize - 1) {
-                jsonResponse += ",";
-            }
-        }
-        jsonResponse += "]";
-        server.send(200, "application/json", jsonResponse);
-    });*/
+  server.on("/get_temperature_data",handleTemperatureData);
   server.onNotFound ( handleNotFound );
   server.begin(); // Web server start
   Serial.println("HTTP server started");

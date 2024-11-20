@@ -324,6 +324,103 @@ void handleUnits() {
   server.client().stop(); // Stop is needed because we sent no content length
   updateOLED();
 }
+/** Handle Graph page */
+
+void handleGraph() {
+  server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  server.sendHeader("Pragma", "no-cache");
+  server.sendHeader("Expires", "-1");
+  server.setContentLength(CONTENT_LENGTH_UNKNOWN);
+  server.send(200, "text/html", ""); // Empty content inhibits Content-length header so we have to close the socket ourselves.
+  server.sendContent(R"(
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Temperature Graph</title>
+    <style>body{font-family:Arial,sans-serif;margin:0;padding:20px;background-color:#0f0f0f;color:#333;}h1{color:#0194B0;margin-bottom:20px;}.container{max-width:800px;margin:auto;padding:20px;background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}canvas{width:100%;height:400px;}</style>
+    </head>
+    <body>
+    <div class="container"><h1>Temperature Over Time</h1><canvas id="temperatureChart" width="800" height="400"></canvas></div>
+    <script>
+    const canvas = document.getElementById('temperatureChart');
+    const ctx = canvas.getContext('2d');
+    let data = { labels: [], temperatures: [] };
+
+    function drawGraph() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      
+      // Draw axes
+      ctx.strokeStyle = '#333';
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(50, 350);
+      ctx.lineTo(750, 350); // X-axis
+      ctx.moveTo(50, 50);
+      ctx.lineTo(50, 350); // Y-axis
+      ctx.stroke();
+      
+      // Draw labels
+      ctx.fillStyle = '#333';
+      ctx.font = '12px Arial';
+      data.labels.forEach((label, index) => {
+        const x = 50 + (index / (data.labels.length - 1)) * 700;
+        ctx.fillText(label, x - 10, 370); // X-axis labels
+      });
+      for (let i = 0; i <= 10; i++) {
+        const y = 350 - (i / 10) * 300;
+        const temp = Math.round((Math.min(...data.temperatures) + (i / 10) * (Math.max(...data.temperatures) - Math.min(...data.temperatures))) * 10) / 10;
+        ctx.fillText(temp + '°C', 10, y + 3); // Y-axis labels
+      }
+      
+      // Plot data
+      ctx.strokeStyle = '#0194B0';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      data.temperatures.forEach((temp, index) => {
+        const x = 50 + (index / (data.labels.length - 1)) * 700;
+        const y = 350 - ((temp - Math.min(...data.temperatures)) / (Math.max(...data.temperatures) - Math.min(...data.temperatures))) * 300;
+        if (index === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      });
+      ctx.stroke();
+    }
+
+    function fetchTemperatureData() {
+      fetch('/get_temperature_data')
+        .then(response => response.json())
+        .then(newData => {
+          data = newData;
+          drawGraph();
+        })
+        .catch(error => console.error('Error fetching data:', error));
+    }
+
+    setInterval(fetchTemperatureData, 5000);
+    fetchTemperatureData();
+    </script>
+    </body>
+    </html>
+  )");
+  server.client().stop(); // Stop is needed because we sent no content length
+}
+
+
+
+/** Handle temperature data retrieval */
+
+void handleTemperatureData() {
+  // Simulated temperature data for this example
+  String jsonResponse = "{ \"labels\": [\"10:00\", \"10:05\", \"10:10\", \"10:15\"], \"temperatures\": [2.5, 2.7, 2.9, 3.0] }";
+  
+  server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
+  server.sendHeader("Pragma", "no-cache");
+  server.sendHeader("Expires", "-1");
+  server.send(200, "application/json", jsonResponse);
+  server.client().stop();
+}
+
 /*
 void handleGraph(){
   server.sendContent(R"(
