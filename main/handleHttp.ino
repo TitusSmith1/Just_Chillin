@@ -412,7 +412,7 @@ void handleGraph() {
 
 void handleTemperatureData() {
   // Simulated temperature data for this example
-  String jsonResponse = "{ \"labels\": [\"10:00\", \"10:05\", \"10:10\", \"10:15\"], \"temperatures\": [2.5, 2.7, 2.9, 3.0] }";
+  String jsonResponse = "{ \"labels\":"+toArrayString(runTimes) +",\"temperatures\":"+toArrayString(temperatures)+"}";
   
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");

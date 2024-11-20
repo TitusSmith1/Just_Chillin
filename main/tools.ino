@@ -19,3 +19,26 @@ String toStringIp(IPAddress ip) {
   return res;
 }
 
+String toArrayString(String arr[]) {
+    String result = "["; // Start with the opening bracket
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        result += "\"" + String(arr[i]) + "\""; // Add each element wrapped in quotes
+        if (i < ARRAY_SIZE - 1) {
+            result += ", "; // Add a comma and space between elements
+        }
+    }
+    result += "]"; // Close with the closing bracket
+    return result;
+}
+
+String toArrayString(float arr[]) {
+    String result = "["; // Start with the opening bracket
+    for (int i = 0; i < ARRAY_SIZE; i++) {
+        result += "\"" + String(arr[i]) + "\""; // Add each element wrapped in quotes
+        if (i < ARRAY_SIZE - 1) {
+            result += ", "; // Add a comma and space between elements
+        }
+    }
+    result += "]"; // Close with the closing bracket
+    return result;
+}

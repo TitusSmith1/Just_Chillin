@@ -37,6 +37,11 @@ Adafruit_MAX31865 thermo = Adafruit_MAX31865(13, 14,27, 26);
  * This is a captive portal because through the softAP it will redirect any http request to http://192.168.4.1/
  */
 
+
+#define ARRAY_SIZE 20  // Define the fixed size of the arrays
+float temperatures[ARRAY_SIZE]; // Array to store temperatures
+String runTimes[ARRAY_SIZE];    // Array to store runtimes in "HH:MM" format
+
 /* Set these to your desired softAP credentials. They are not configurable at runtime */
 const char *softAP_ssid = "ESP_ap";
 const char *softAP_password = "A6";
@@ -81,6 +86,8 @@ bool is_active=false;
 bool isCelcius=false;
 
 const int freezer = 25;
+
+unsigned long lasttime=0;
 
 void setup() {
   delay(1000);
@@ -190,6 +197,11 @@ void loop() {
   else{
     digitalWrite(freezer, LOW);
   }
+  if(lasttime<millis()-60000){
+    lasttime=millis();
+    appendTemperatureAndRuntime();
+  }
+  Serial.println(millis());
 }
 
 void updateOLED(){
@@ -236,4 +248,35 @@ void updateRDT(){
     }
     thermo.clearFault();
   }
+}
+
+
+void shiftAndAdd(float newTemperature, String newRuntime) {
+    // Shift all elements in the arrays to the left by one
+    for (int i = 0; i < ARRAY_SIZE - 1; i++) {
+        temperatures[i] = temperatures[i + 1];
+        runTimes[i] = runTimes[i + 1];
+    }
+
+    // Add the new values at the end of the arrays
+    temperatures[ARRAY_SIZE - 1] = newTemperature;
+    runTimes[ARRAY_SIZE - 1] = newRuntime;
+}
+
+void appendTemperatureAndRuntime() {
+    // Calculate hours and minutes from the runtime in milliseconds
+    unsigned long totalMinutes = millis() / 60000; // Convert milliseconds to minutes
+    unsigned int hours = totalMinutes / 60;            // Calculate hours
+    unsigned int minutes = totalMinutes % 60;          // Calculate remaining minutes
+
+    // Format runtime as "HH:MM"
+    String formattedTime = String(hours) + ":" + (minutes < 10 ? "0" : "") + String(minutes);
+
+    // Add the current temperature and runtime, maintaining array size
+    shiftAndAdd(temp, formattedTime);
+    // Debug output
+    Serial.print("Data Added - Temperature: ");
+    Serial.print(temp);
+    Serial.print(", Runtime: ");
+    Serial.println(formattedTime);
 }
