@@ -1,4 +1,5 @@
-/** Is this an IP? */
+/** Is this an IP*/
+//Checks to see if string is valid IP address
 boolean isIp(String str) {
   for (int i = 0; i < str.length(); i++) {
     int c = str.charAt(i);
@@ -9,7 +10,8 @@ boolean isIp(String str) {
   return true;
 }
 
-/** IP to String? */
+/** IP to String */
+//Converts IPAddress to string representation
 String toStringIp(IPAddress ip) {
   String res = "";
   for (int i = 0; i < 3; i++) {
@@ -19,6 +21,7 @@ String toStringIp(IPAddress ip) {
   return res;
 }
 
+//Function to concatenate string array for http get json request
 String toArrayString(String arr[]) {
     String result = "["; // Start with the opening bracket
     for (int i = 0; i < ARRAY_SIZE; i++) {
@@ -30,7 +33,7 @@ String toArrayString(String arr[]) {
     result += "]"; // Close with the closing bracket
     return result;
 }
-
+//Function to concatenate float array for http get json request
 String toArrayString(float arr[]) {
     String result = "["; // Start with the opening bracket
     for (int i = 0; i < ARRAY_SIZE; i++) {

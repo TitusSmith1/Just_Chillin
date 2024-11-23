@@ -3,6 +3,7 @@ void handleRoot() {
   if (captivePortal()) { // If captive portal redirect instead of displaying the page.
     return;
   }
+  //Send Html web page to display home page of freezer
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
   server.sendHeader("Expires", "-1");
@@ -97,19 +98,24 @@ void handleRoot() {
     "            <h1>Just Chillin' Freezer</h1>"
     "            <img src='https://img.goodfon.com/wallpaper/nbig/4/57/fjords-rocky-mountains-snow-sea-bay-water-night-northern-lig.webp' alt='Background_Image'>"
   );
+  //Print the current temperature in celcius or farenheit
   server.sendContent("<h2>Current Freezer Temperature: " + String(temp) + String(isCelcius?" °C":" °F")+"</h2>");
+  //Display the freezer status
   if(is_active){
     server.sendContent("<h2>Freezer Status <green_text> ON </green_text> </h2>");
   }
   else{
     server.sendContent("<h2>Freezer Status <red_text> OFF </red_text> </h2>");
   }
+  //Display navigation links to set the setpoint tem and toggle units
   server.sendContent("<p><h3>You can update the setpoint temperature <a href='/set_temp'>here</a>.</h3></p><p><h3>You can also <a href='/update_units'>toggle units</a>.</h3></p><p><h3>You can view the temperature graph <a href='/get_graph'>here</a>.</h3></p><p><h4> Wifi Connection:</p>");
+  //Display wifi connection information
   if (server.client().localIP() == apIP) {
     server.sendContent(String("<p>You are connected through the soft AP: <strong>") + softAP_ssid + "</strong></p>");
   } else {
     server.sendContent(String("<p>You are connected through the wifi network: <strong>") + ssid + "</strong></p>");
   }
+  //Display a link to wifi connection page
   server.sendContent("<p>Wifi connection configuration <a href='/wifi'>here</a>.</h4></p></body></html></div></body></html>");
   server.client().stop(); // Stop is needed because we sent no content length
 }
@@ -133,6 +139,7 @@ void handleWifi() {
   server.sendHeader("Expires", "-1");
   server.setContentLength(CONTENT_LENGTH_UNKNOWN);
   server.send(200, "text/html", ""); // Empty content inhibits Content-length header so we have to close the socket ourselves.
+  //Display wifi configuratio page
   server.sendContent(
     "<html><head></head><body>"
     "<h1>Wifi config</h1>"
@@ -160,6 +167,7 @@ void handleWifi() {
     "\r\n<br />"
     "<table><tr><th align='left'>WLAN list (refresh if any missing)</th></tr>"
   );
+  //scan and display wifi networks
   Serial.println("scan start");
   int n = WiFi.scanNetworks();
   Serial.println("scan done");
@@ -170,6 +178,7 @@ void handleWifi() {
   } else {
     server.sendContent(String() + "<tr><td>No WLAN found</td></tr>");
   }
+  //allow user to select and input password to connect to wifi network
   server.sendContent(
     "</table>"
     "\r\n<br /><form method='POST' action='wifisave'><h4>Connect to network:</h4>"
@@ -196,7 +205,7 @@ void handleWifiSave() {
   saveCredentials();
   connect = strlen(ssid) > 0; // Request WLAN connect with new credentials if there is a SSID
 }
-
+/**handle setpoint page request*/
 void handleSetTemp() {
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
@@ -272,28 +281,28 @@ void handleSetTemp() {
     )");
   server.client().stop(); // Stop is needed because we sent no content length
 }
-
+/**handle save temp form*/
 void handleSaveTemp() {
   Serial.println("Data Incoming");
+  //update setpoint temp
   newtemp=server.arg("t").toFloat();
   Serial.println(newtemp);
-
-
   // Create a small HTML response with a JavaScript alert
   String response = "<html><head><script>"
                     "alert('Temp updated: " + String(newtemp) + "');"
                     "window.location.href = 'set_temp';"
                     "</script></head><body></body></html>";
-
   // Send the response
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
   server.sendHeader("Expires", "-1");
   server.send(200, "text/html", response); // Send a 200 response with the HTML
   server.client().stop(); // Stop is needed because we sent no content length
+  //update the oled display with new setpoint
   updateOLED();
 }
 
+/*handle toggle units form*/
 void handleUnits() {
   Serial.println("Data Incoming");
   isCelcius=!isCelcius;
@@ -311,9 +320,10 @@ void handleUnits() {
   server.sendHeader("Expires", "-1");
   server.send(200, "text/html", response); // Send a 200 response with the HTML
   server.client().stop(); // Stop is needed because we sent no content length
-  updateOLED();
+  updateOLED();//Update the oled with the new units.
 }
 
+/*handle graph display page*/
 void handleGraph() {
   server.sendHeader("Cache-Control", "no-cache, no-store, must-revalidate");
   server.sendHeader("Pragma", "no-cache");
@@ -394,6 +404,7 @@ void handleGraph() {
   server.client().stop(); // Stop is needed because we sent no content length
 }
 
+/*handle temperature get request for graph page*/
 void handleTemperatureData() {
   // Simulated temperature data for this example
   String jsonResponse = "{ \"labels\":"+toArrayString(runTimes) +",\"temperatures\":"+toArrayString(temperatures)+"}";
@@ -405,6 +416,7 @@ void handleTemperatureData() {
   server.client().stop();
 }
 
+/*handle page not found*/
 void handleNotFound() {
   if (captivePortal()) { // If caprive portal redirect instead of displaying the error page.
     return;
