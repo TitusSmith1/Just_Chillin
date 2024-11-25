@@ -232,6 +232,16 @@ void handleSetTemp() {
                 margin: 0;
                 color: #0194B0;
             }
+            h3 {
+                font-family: Arial, sans-serif;
+                margin: 10;
+                padding: 15px;
+                size: 20px;
+                background-color: white;
+                color: #000000;
+                border-radius: 10px;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            }
             h4 {
                 margin: 10;
                 padding: 15px;
@@ -275,7 +285,7 @@ void handleSetTemp() {
                 <br />
                 <input type="submit" value="Send" />
             </form>
-        </div>
+        <p><h3><a href='/'>Return</a></h3></p></div>
     </body>
     </html>
     )");
@@ -337,10 +347,10 @@ void handleGraph() {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Temperature Graph</title>
-    <style>body{font-family:Arial,sans-serif;margin:0;padding:20px;background-color:#0f0f0f;color:#333;}h1{color:#0194B0;margin-bottom:20px;}.container{max-width:800px;margin:auto;padding:20px;background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}canvas{width:100%;height:400px;}</style>
+    <style>body{font-family:Arial,sans-serif;margin:0;padding:20px;background-color:#0f0f0f;color:#333;}h1{color:#0194B0;margin-bottom:20px;}h3{font-family: Arial, sans-serif;margin: 10;padding: 15px;size: 20px;background-color: white;color: #000000;border-radius: 10px;box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);}.container{max-width:800px;margin:auto;padding:20px;background:white;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,0.1);}canvas{width:100%;height:400px;}</style>
     </head>
     <body>
-    <div class="container"><h1>Temperature Over Time</h1><canvas id="temperatureChart" width="800" height="400"></canvas></div>
+    <div class="container"><h1>Temperature Over Time</h1><canvas id="temperatureChart" width="800" height="400"></canvas><p><h3><a href='/'>Return</a></h3></p></div>
     <script>
     const canvas = document.getElementById('temperatureChart');
     const ctx = canvas.getContext('2d');

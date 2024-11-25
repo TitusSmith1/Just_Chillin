@@ -41,7 +41,7 @@ Adafruit_MAX31865 thermo = Adafruit_MAX31865(13, 14,27, 26);
  */
 
 // temperature and time arrays to store data for graph
-#define ARRAY_SIZE 20  // Define the fixed size of the arrays
+#define ARRAY_SIZE 30  // Define the fixed size of the arrays
 float temperatures[ARRAY_SIZE]; // Array to store temperatures
 String runTimes[ARRAY_SIZE];    // Array to store runtimes in "HH:MM" format
 
